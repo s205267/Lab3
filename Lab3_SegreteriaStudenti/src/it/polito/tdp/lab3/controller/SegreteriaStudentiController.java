@@ -1,6 +1,7 @@
 package it.polito.tdp.lab3.controller;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -63,7 +64,9 @@ public class SegreteriaStudentiController {
     	lblErrore.setText("");
     	String nomeCorso = boxCorso.getValue();
     	String visualizza="";
-    	if((nomeCorso!=null) && (nomeCorso.compareTo("")!=0) )
+    	
+    	//Metodo per cercare studenti iscritti ad un corso
+    	if((nomeCorso!=null) && (nomeCorso.compareTo("")!=0) && (txtMatricola.getText().compareTo("")==0)  )
     	{
     		if(seg.cercaStudentiPerCorsi(nomeCorso)!= null)
     		{
@@ -80,12 +83,36 @@ public class SegreteriaStudentiController {
     			txtRisultato.setText("Nessuno studente in questo corso");
     		}
     	}
-    	else
-    	{
-    		lblErrore.setText("Selezionare un corso");
-    	}
+
+        //METODO PER CERCARE CORSI A CUI E' ISCRITTO UNO STUDENTE
+    	else if(((nomeCorso==null) || (nomeCorso.compareTo("")==0)) && txtMatricola.getText().compareTo("")!=0 && txtMatricola.getText()!=null )
+        {
+    		
+    	try{
+	        	if(seg.cercaStudentePerMatricola(Integer.parseInt(txtMatricola.getText()))!=null)
+	        	{
+	        		List<Corso> lista = new ArrayList<Corso>(seg.corsiPerStudente(Integer.parseInt(txtMatricola.getText())));
+	        		for (Corso c : lista)
+	        		{
+	        			visualizza+= c.getCondIns()+" "+c.getCrediti()+" "+c.getNome()+" "+c.getpD()+"\n";
+	        		}
+	        		txtRisultato.setText(visualizza);
+	        		
+	        	}
+	        	else{
+	        		txtRisultato.setText("Inserisci una matricola corretta");
+	        	}
+    		}
+	    	catch(NumberFormatException e)
+	    	{
+	    		txtRisultato.setText("Inserisci una matricola corretta");
+	
+	    	}
+        }
+    	 
 
     }
+    
 
     @FXML
     void doComplete(MouseEvent event) {
@@ -118,6 +145,28 @@ public class SegreteriaStudentiController {
 
     @FXML
     void doIscrizione(ActionEvent event) {
+    	String nomeCorso = boxCorso.getValue();
+    	String matricola=txtMatricola.getText();
+    	
+    	
+    	if((nomeCorso!=null) && (nomeCorso.compareTo("")!=0) && matricola.compareTo("")!=0 && matricola!=null )
+    	{
+    		//Se lo studente esiste
+    		if(seg.cercaStudentePerMatricola(Integer.parseInt(matricola))!=null)
+    		{
+    			
+	    			if(seg.iscriviStudenteACorso(Integer.parseInt(matricola),nomeCorso))
+	    			{
+	    				txtRisultato.setText("Lo studente "+seg.cercaStudentePerMatricola(Integer.parseInt(matricola)).getCognome()+" "+seg.cercaStudentePerMatricola(Integer.parseInt(matricola)).getNome()+" è stata aggiunto/a al corso: "+nomeCorso+"");
+	    			}
+	    			else
+	    			{
+	    				txtRisultato.setText("Lo studente risulta già iscritto a tale corso");
+	    			}
+    			
+    			
+    		}
+    	}
 
     }
 

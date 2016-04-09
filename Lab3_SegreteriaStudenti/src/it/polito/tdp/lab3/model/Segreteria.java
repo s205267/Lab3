@@ -30,10 +30,23 @@ public class Segreteria {
 		return dao.iscrittiAlCorso(nomeCorso);
 		
 	}
+	public List<Corso> corsiPerStudente(int matricola)
+	{
+		StudenteDAO dao= new StudenteDAO();
+		return dao.corsiPerStudente(matricola);
+		
+	}
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public boolean iscriviStudenteACorso(int matricola, String nomeCorso) {
+
+		StudenteDAO dao = new StudenteDAO();
+		return dao.iscriviStudenteACorso(matricola, nomeCorso);
+		
 	}
 
 }
