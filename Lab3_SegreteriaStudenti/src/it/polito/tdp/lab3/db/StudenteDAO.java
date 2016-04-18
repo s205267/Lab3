@@ -1,7 +1,8 @@
 package it.polito.tdp.lab3.db;
 
-import java.sql.Connection;
+import java.sql.*;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,23 +13,32 @@ import it.polito.tdp.lab3.model.Corso;
 import it.polito.tdp.lab3.model.Studente;
 
 public class StudenteDAO {
-	String jdbcURL = "jdbc:mysql://localhost/iscritticorsi?user=root";
 
 	private int matricola;
 	private String cognome;
 	private String nome;
 	private String cds;
 	
+	/**
+	 * Legge da database lo {@link Studente} che possiede 
+	 * la matricola data da {@code matricola} e ritorna un oggetto di tipo Studente 
+	 * 
+	 * @param matricola Matricola dello studente che vogliamo cercare
+	 * @return Uno studente se esiste,altrimenti null
+	 */
 	public Studente findStudente(int matricola)
 	{
 		
 		try{	
-			Connection conn = DriverManager.getConnection(jdbcURL);
+			Connection conn =DBConnect.getConnection();
 			
-			Statement st = conn.createStatement();
 			
-			String sql= "Select * From studente where matricola =\""+matricola+"\"";				
-			ResultSet res = st.executeQuery(sql);
+			
+			//String sql= "Select * From studente where matricola =\""+matricola+"\"";				
+			String sql= "Select cognome,nome,cds From studente WHERE matricola = ?";				
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1,matricola);
+			ResultSet res = st.executeQuery();
 			
 			if(res.next())
 			{
@@ -61,7 +71,7 @@ public class StudenteDAO {
 	{
 		try{	
 			List<Corso> listaCorsiStudente = new ArrayList<Corso>();
-			Connection conn = DriverManager.getConnection(jdbcURL);
+			Connection conn =DBConnect.getConnection();
 			
 			Statement st = conn.createStatement();
 			
@@ -95,7 +105,7 @@ public class StudenteDAO {
 	public boolean iscriviStudenteACorso(int matricola, String nomeCorso)  {
 		String codins="";
 		try{	
-			Connection conn = DriverManager.getConnection(jdbcURL);
+			Connection conn =DBConnect.getConnection();
 			
 			Statement st = conn.createStatement();
 			

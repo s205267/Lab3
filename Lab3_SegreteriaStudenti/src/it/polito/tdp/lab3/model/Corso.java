@@ -41,5 +41,30 @@ public class Corso {
 	public void setpD(int pD) {
 		this.pD = pD;
 	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((condIns == null) ? 0 : condIns.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Corso other = (Corso) obj;
+		if (condIns == null) {
+			if (other.condIns != null)
+				return false;
+		} else if (!condIns.equals(other.condIns))
+			return false;
+		return true;
+	}
+	
+	
 	
 }
